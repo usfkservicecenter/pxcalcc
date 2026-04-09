@@ -6,7 +6,7 @@
     <title>PX 혜택 계산기</title>
     <style>
         :root { --kb: #ffbc00; --hn: #008485; --sh: #0046ff; --ibk: #00a5e5; --bg: #f2f4f7; }
-        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; font-family: 'Pretendard', sans-serif; }
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; font-family: 'Pretendard', -apple-system, sans-serif; }
         body { background: var(--bg); margin: 0; display: flex; justify-content: center; min-height: 100vh; }
         .app-container { background: #fff; width: 100%; max-width: 480px; min-height: 100vh; position: relative; padding-bottom: 80px; }
         
@@ -45,6 +45,8 @@
         .info-section { margin-bottom: 24px; }
         .info-section h3 { font-size: 16px; color: #1e293b; border-left: 4px solid #1e293b; padding-left: 10px; margin-bottom: 12px; }
         .info-section p { font-size: 13px; color: #64748b; line-height: 1.6; margin: 0; white-space: pre-wrap; }
+        .info-section b { color: #1e293b; }
+        .example-box { background: #f8fafc; padding: 12px; border-radius: 12px; margin-bottom: 10px; border: 1px dashed #e2e8f0; }
     </style>
 </head>
 <body>
@@ -96,40 +98,52 @@
 <div id="infoModal" class="modal" onclick="closeModal()">
     <div class="modal-content" onclick="event.stopPropagation()">
         <div class="modal-header">
-            <div class="title" style="margin:0;">💳 카드사별 환급 조건</div>
+            <div class="title" style="margin:0;">🎖️ px 카드 혜택 비교</div>
             <span class="close-btn" onclick="closeModal()">&times;</span>
         </div>
         
         <div class="info-section">
             <h3>✅ 국민은행 캐시백</h3>
-            <p>• 3만원 미만: 10% (1회 한도 1천원, 월 2회)
-• 3만원 이상: 5% (월 한도 5만원)
-• 7만원 이상: 10% (월 한도 5만원)
-• 10만원 이상: 20% (월 한도 5만원)
-* 전월 이용실적 관계없이 제공</p>
+            <p>• <b>3만원 미만</b> - 할인율 <b>10%</b>, 할인한도 1회 1천원까지, 월 2회
+• <b>3만원 이상</b> - 할인율 <b>5%</b>, 통합 할인한도 월 최대 5만원
+• <b>7만원 이상</b> - 할인율 <b>10%</b>, 통합 할인한도 월 최대 5만원
+• <b>10만원 이상</b> - 할인율 <b>20%</b>, 통합 할인한도 월 최대 5만원
+<small>*전월 이용실적 관계없이 할인혜택 제공</small></p>
         </div>
 
         <div class="info-section">
-            <h3>✅ 기업은행 캐시백 (기본 + 특별)</h3>
-            <p><b>[기본할인]</b>
-• 3만원 미만: 15% (월 한도 1만원, 현역3회/급여6회)
-• 3만원 이상: 10% / 7만원 이상: 20% / 10만원 이상: 30%
-• 기본 월 통합 한도 5만원
-<b>[특별할인]</b>
-• 20만원 이상 결제 시 5만원 추가 할인 (현역 연1회/급여 연2회)</p>
+            <h3>✅ 기업은행 - 캐시백</h3>
+            <div class="example-box">
+                💡 <b>예시:</b> PX에서 20만원 결제 시 <b>10만원 할인</b><br>
+                (5만원 기본할인 + 5만원 특별할인 동시 적용)
+            </div>
+            <p><b>a) PX기본할인: 3만원 미만 구간 및 3만원 이상 구간 할인한도는 각각 별도로 적용</b>
+• <b>3만원 미만</b> - 할인율 <b>15%</b>, 월 할인한도 1만원, 현역병 월 3회 할인 가능, 병 급여이체자 월 6회 가능
+• <b>3만원 이상</b> - 할인율 <b>10%</b>, 통합 월 한도 5만원, 현역병 월 2회 할인 가능, <b>병 급여이체자는 횟수 무제한</b>
+• <b>7만원 이상</b> - 할인율 <b>20%</b>, 통합 월 한도 5만원, 현역병 월 2회 할인 가능, <b>병 급여이체자는 횟수 무제한</b>
+• <b>10만원 이상</b> - 할인율 <b>30%</b>, 통합 월 한도 5만원, 현역병 월 2회 할인 가능, <b>병 급여이체자는 횟수 무제한</b>
+
+<b>b) PX특별할인</b>
+• <b>20만원 이상</b> - 할인금액 <b>5만원</b>, 현역병 연 1회, 병 급여이체자 연 2회
+
+<b>*유의사항</b>
+• PX기본할인과 PX 특별할인은 할인한도와 할인횟수가 각각 별도로 적용
+• <b>현역병:</b> 전월 말일 기준 IBK장병내일준비적금 보유 고객
+• <b>병 급여이체자:</b> IBK나라사랑카드 결제계좌로 전월 병 급여 수령 시 인정</p>
         </div>
 
         <div class="info-section">
-            <h3>✅ 신한은행 20% 캐시백</h3>
-            <p>• 3만원 미만: 일 1회 최대 1천원 캐시백
-• 3만원 이상: 건당 제한 없이 20% 적용
-• 통합 월 한도 최대 10만원 캐시백</p>
+            <h3>✅ 신한은행 - 20% 캐시백</h3>
+            <p>• <b>건당 3만원 미만</b> - 일 1회 최대 <b>1천원</b> 캐시백
+• <b>건당 3만원 이상</b> - 제한 없이 <b>20%</b> 캐시백
+• <b>통합 월 한도</b> - 최대 <b>10만원</b> 캐시백</p>
         </div>
 
         <div class="info-section">
-            <h3>✅ 하나은행 캐시백</h3>
-            <p>• 10만원 미만: 30% (월 한도 5천원)
-• 10만원 이상: 20% (일 한도 2만원, 월 한도 10만원)</p>
+            <h3>✅ 하나은행 - 캐시백</h3>
+            <p>• <b>10만원 미만</b> - <b>30%</b> (월 한도 5천원)
+• <b>10만원 이상</b> - <b>20%</b> (일 한도 2만원, 월 한도 10만원)
+<small>*해군·해병대 군마트 포함, 전월 이용실적 관계없이 할인 제공</small></p>
         </div>
     </div>
 </div>
@@ -138,7 +152,7 @@
     let selections = { cards: new Set(), bank: '' };
 
     function go(s) {
-        if(s===3 && selections.cards.size===0) return alert('카드를 선택해주세요.');
+        if(s===3 && selections.cards.size===0) return alert('카드를 최소 하나 이상 선택해주세요.');
         document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
         document.getElementById('step'+s).classList.add('active');
     }
@@ -165,25 +179,34 @@
         resultArea.style.display='block';
 
         let res = [];
+        
+        // KB국민
         if(selections.cards.has('kb')) {
             let kb = val < 30000 ? Math.min(val*0.1, 1000) : (val < 70000 ? val*0.05 : (val < 100000 ? val*0.1 : val*0.2));
             res.push({ name: '국민', benefit: Math.min(kb, 50000) });
         }
+        
+        // IBK기업
         if(selections.cards.has('ibk')) {
             let base = val < 30000 ? Math.min(val*0.15, 10000) : Math.min(val * (val >= 100000 ? 0.3 : (val >= 70000 ? 0.2 : 0.1)), 50000);
             let special = (val >= 200000 && selections.bank === 'ibk') ? 50000 : 0;
             res.push({ name: '기업', benefit: base + special });
         }
+        
+        // 신한
         if(selections.cards.has('sh')) {
             let sh = val < 30000 ? Math.min(val*0.2, 1000) : val * 0.2;
             res.push({ name: '신한', benefit: Math.min(sh, 100000) });
         }
+        
+        // 하나
         if(selections.cards.has('hn')) {
             let hn = val < 100000 ? Math.min(val*0.3, 5000) : Math.min(val*0.2, 20000);
             res.push({ name: '하나', benefit: hn });
         }
 
         res.sort((a,b)=>b.benefit - a.benefit);
+        
         document.getElementById('bestName').innerText = res[0].name + ' 나라사랑카드 추천';
         document.getElementById('bestAmt').innerText = Math.round(res[0].benefit).toLocaleString() + '원 환급';
         document.getElementById('otherResults').innerHTML = res.map(r=>`
