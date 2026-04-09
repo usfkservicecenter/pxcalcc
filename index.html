@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>PX 혜택 계산기</title>
+    <style>
+        :root { --kb: #ffbc00; --hn: #008485; --sh: #0046ff; --ibk: #00a5e5; --bg: #f2f4f7; }
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; font-family: 'Pretendard', sans-serif; }
+        body { background: var(--bg); margin: 0; display: flex; justify-content: center; min-height: 100vh; }
+        .app-container { background: #fff; width: 100%; max-width: 480px; min-height: 100vh; position: relative; overflow-x: hidden; }
+        
+        .page { display: none; padding: 24px; animation: fadeIn 0.4s ease; }
+        .page.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* 시작 페이지 */
+        .start-page { text-align: center; padding-top: 100px; }
+        .start-page h1 { font-size: 28px; margin-bottom: 10px; color: #1e293b; }
+        .start-page p { color: #64748b; margin-bottom: 40px; }
+        .btn-main { background: #1e293b; color: #fff; border: none; padding: 18px 40px; border-radius: 16px; font-size: 18px; font-weight: 700; cursor: pointer; width: 100%; }
+
+        /* 선택 페이지 */
+        .title { font-size: 20px; font-weight: 700; margin-bottom: 24px; color: #1e293b; }
+        .select-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 30px; }
+        .select-item { border: 2px solid #e2e8f0; border-radius: 16px; padding: 16px; cursor: pointer; transition: 0.2s; position: relative; }
+        .select-item.active { border-color: #1e293b; background: #f8fafc; }
+        .select-item b { display: block; font-size: 15px; margin-bottom: 4px; }
+        .select-item span { font-size: 11px; color: #94a3b8; }
+
+        /* 입력 및 결과 */
+        .input-group { position: relative; margin-bottom: 20px; }
+        input { width: 100%; padding: 20px; border: 2px solid #e2e8f0; border-radius: 16px; font-size: 24px; font-weight: 800; outline: none; }
+        .unit { position: absolute; right: 20px; top: 22px; font-size: 20px; color: #94a3b8; }
+
+        .result-box { background: #1e293b; color: #fff; padding: 24px; border-radius: 20px; margin-bottom: 20px; }
+        .result-box .best-label { font-size: 14px; opacity: 0.8; margin-bottom: 8px; }
+        .result-box .best-card { font-size: 24px; font-weight: 800; }
+        
+        .other-results { margin-top: 20px; }
+        .card-row { display: flex; justify-content: space-between; padding: 16px; border-bottom: 1px solid #f1f5f9; }
+        .card-row:last-child { border: none; }
+        .card-row span { font-weight: 600; color: #475569; }
+        .card-row b { color: #1e293b; }
+    </style>
+</head>
+<body>
+
+<div class="app-container">
+    <div id="step1" class="page active start-page">
+        <h1>🎖️ PX 혜택 계산기</h1>
+        <p>어느 카드가 가장 많이 환급해줄까?<br>2026 최신 혜택으로 계산해드려요.</p>
+        <button class="btn-main" onclick="go(2)">시작하기</button>
+    </div>
+
+    <div id="step2" class="page">
+        <div class="title">보유하신 카드를 모두 선택하세요</div>
+        <div class="select-grid" id="cardSelect">
+            <div class="select-item" onclick="toggle(this, 'card', 'kb')"><b>국민</b><span>나라사랑카드</span></div>
+            <div class="select-item" onclick="toggle(this, 'card', 'hn')"><b>하나</b><span>나라사랑카드</span></div>
+            <div class="select-item" onclick="toggle(this, 'card', 'sh')"><b>신한</b><span>나라사랑카드</span></div>
+            <div class="select-item" onclick="toggle(this, 'card', 'ibk')"><b>기업</b><span>나라사랑카드</span></div>
+        </div>
+
+        <div class="title">급여이체(군인월급) 은행은?</div>
+        <div class="select-grid" id="bankSelect">
+            <div class="select-item" onclick="toggleSingle(this, 'bank', 'kb')"><b>국민은행</b></div>
+            <div class="select-item" onclick="toggleSingle(this, 'bank', 'hn')"><b>하나은행</b></div>
+            <div class="select-item" onclick="toggleSingle(this, 'bank', 'sh')"><b>신한은행</b></div>
+            <div class="select-item" onclick="toggleSingle(this, 'bank', 'ibk')"><b>기업은행</b></div>
+            <div class="select-item" onclick="toggleSingle(this, 'bank', 'etc')"><b>타행/기타</b></div>
+        </div>
+        <button class="btn-main" onclick="go(3)">선택 완료</button>
+    </div>
+
+    <div id="step3" class="page">
+        <div class="title">결제할 금액을 입력하세요</div>
+        <div class="input-group">
+            <input type="number" id="priceInput" placeholder="0" oninput="calculate()">
+            <span class="unit">원</span>
+        </div>
+
+        <div id="resultArea" style="display:none;">
+            <div class="result-box">
+                <div class="best-label">지금 가장 유리한 카드는?</div>
+                <div class="best-card" id="bestName">---</div>
+                <div id="bestAmt" style="font-size: 32px; font-weight: 900; margin-top: 10px;">0원 환급</div>
+            </div>
+
+            <div class="title" style="margin-bottom:10px;">카드별 환급액 정리</div>
+            <div class="other-results" id="otherResults"></div>
+            
+            <button class="btn-main" style="margin-top:30px; background:#f1f5f9; color:#64748b;" onclick="go(2)">다시 선택하기</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    let selections = { cards: new Set(), bank: '' };
+
+    function go(step) {
+        if(step === 3 && selections.cards.size === 0) { alert('최소 1개 이상의 카드를 선택해주세요.'); return; }
+        document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+        document.getElementById('step' + step).classList.add('active');
+    }
+
+    function toggle(el, type, val) {
+        el.classList.toggle('active');
+        if(el.classList.contains('active')) selections.cards.add(val);
+        else selections.cards.delete(val);
+    }
+
+    function toggleSingle(el, type, val) {
+        el.parentElement.querySelectorAll('.select-item').forEach(i => i.classList.remove('active'));
+        el.classList.add('active');
+        selections.bank = val;
+    }
+
+    function calculate() {
+        const val = parseInt(document.getElementById('priceInput').value) || 0;
+        const resultArea = document.getElementById('resultArea');
+        if(val <= 0) { resultArea.style.display = 'none'; return; }
+        resultArea.style.display = 'block';
+
+        let results = [];
+
+        // 1. 국민 (KB)
+        if(selections.cards.has('kb')) {
+            let kb = 0;
+            if (val < 30000) kb = Math.min(val * 0.1, 1000);
+            else if (val < 70000) kb = val * 0.05;
+            else if (val < 100000) kb = val * 0.1;
+            else kb = val * 0.2;
+            results.push({ name: '국민', benefit: Math.min(kb, 50000) });
+        }
+
+        // 2. 기업 (IBK)
+        if(selections.cards.has('ibk')) {
+            let base = 0;
+            if (val < 30000) base = Math.min(val * 0.15, 10000);
+            else {
+                let rate = (val >= 100000) ? 0.3 : (val >= 70000 ? 0.2 : 0.1);
+                base = Math.min(val * rate, 50000);
+            }
+            let special = (val >= 200000) ? 50000 : 0;
+            results.push({ name: '기업', benefit: base + special });
+        }
+
+        // 3. 신한
+        if(selections.cards.has('sh')) {
+            let sh = (val < 30000) ? Math.min(val * 0.2, 1000) : val * 0.2;
+            results.push({ name: '신한', benefit: Math.min(sh, 100000) });
+        }
+
+        // 4. 하나
+        if(selections.cards.has('hn')) {
+            let hn = (val < 100000) ? Math.min(val * 0.3, 5000) : Math.min(val * 0.2, 20000);
+            results.push({ name: '하나', benefit: hn });
+        }
+
+        results.sort((a, b) => b.benefit - a.benefit);
+
+        // 결과 업데이트
+        document.getElementById('bestName').innerText = results[0].name + ' 나라사랑카드';
+        document.getElementById('bestAmt').innerText = Math.floor(results[0].benefit).toLocaleString() + '원 환급';
+
+        document.getElementById('otherResults').innerHTML = results.map(r => `
+            <div class="card-row">
+                <span>${r.name} 나라사랑</span>
+                <b>${Math.floor(r.benefit).toLocaleString()}원</b>
+            </div>
+        `).join('');
+    }
+</script>
+</body>
+</html>
